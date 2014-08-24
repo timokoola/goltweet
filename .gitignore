@@ -24,3 +24,7 @@ _testmain.go
 
 # Twitter and other API keys
 *.keys
+*.pyc
+images/
+anims/
+*.gif
