@@ -9,6 +9,10 @@ from time import time
 from twython import Twython
 import json
 import argparse
+import os.path
+import pprint
+
+#pp = pprint.PrettyPrinter(indent=4)
 
 class Game(object):
     """GOL universe, size of 160x160"""
@@ -54,13 +58,32 @@ class Game(object):
                 next_universe[n] = 1
         if len(next_universe) == 0:
             self.alive = False
+        if generations > 1000:
+            self.alive = False
         self.universe = next_universe
         self.generations += 1
 
     def save_json(self,filename):
-        f = open(filename, "w")
-        f.write(json.dumps(self.universe.keys()))
+        if self.alive:
+            f = open(filename, "w")
+            dump = {"generations": self.generations, "universe": self.universe.keys() }
+            f.write(json.dumps(dump))
+            f.close()
+        else:
+            os.remove(filename)
+
+    def load_json(self, filename):
+        f = open(filename,"r")
+        objs = json.loads("".join(f.readlines()))
+        self.init_from_keys(objs["universe"])
+        self.generations = objs["generations"]
         f.close()
+
+
+    def init_from_keys(self, keylist):
+        self.universe = defaultdict(int)
+        for k in keylist:
+            self.universe[tuple(k)] = 1
 
     def save_big_picture(self):
         min_x = min([i[0] for i in self.universe.keys()])
@@ -77,10 +100,6 @@ class Game(object):
             pixels[p[0]-min_x, p[1]-min_y] = (32, 255, 32)
         ig = ig.resize((w*4, h*4) , Image.ANTIALIAS)
         ig.save("anims/gol%04d.png" % self.generations, 'PNG')
-
-
-
-
 
 class TwythonHelper:
 
@@ -110,15 +129,15 @@ def random_select(x,y):
     return 1.0 / dist_from_center
 
 
-
-
-
 if __name__ == "__main__":
     args = handle_command_line()
     api = (TwythonHelper("test.keys")).api
 
     g = Game()
-    g.generate()
+    if os.path.isfile(args.gamefile):
+        g.load_json(args.gamefile)
+    else:
+        g.generate()
     g.save_image()
     for x in xrange(100):
         g.next()
