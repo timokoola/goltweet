@@ -58,7 +58,7 @@ class Game(object):
                 next_universe[n] = 1
         if len(next_universe) == 0:
             self.alive = False
-        if generations > 1000:
+        if self.generations > 1000:
             self.alive = False
         self.universe = next_universe
         self.generations += 1
@@ -78,6 +78,9 @@ class Game(object):
         self.init_from_keys(objs["universe"])
         self.generations = objs["generations"]
         f.close()
+
+    def summary(self):
+        return "Game of life after %d generations, %d cells alive." % (self.generations, len(self.universe.keys()))
 
 
     def init_from_keys(self, keylist):
@@ -151,7 +154,7 @@ if __name__ == "__main__":
     
     fn = open(outfile_name, "rb")
 
-    api.update_status_with_media(status="Game of life", media=fn)
+    api.update_status_with_media(status=g.summary(), media=fn)
     fn.close()
 
     g.save_json(args.gamefile)
