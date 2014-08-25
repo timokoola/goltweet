@@ -141,11 +141,13 @@ if __name__ == "__main__":
         g.load_json(args.gamefile)
     else:
         g.generate()
+    start = g.generations
     g.save_image()
     for x in xrange(100):
         g.next()
         g.save_image()
-    anim_items =["images/gol%04d.gif" % x for x in xrange(100)]
+    end = g.generations
+    anim_items =["images/gol%04d.gif" % x for x in xrange(start, end)]
     outfile_name = "anims/animation%.02f.gif" % time() 
     outfile = open(outfile_name, "wb")
     cmd = ["gifsicle", "--delay=30", "--loop"] + anim_items
