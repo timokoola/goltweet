@@ -60,8 +60,12 @@ class Game(object):
             self.alive = False
         if self.generations > 1000:
             self.alive = False
+        self.alive = self.isnextalive(next)
         self.universe = next_universe
         self.generations += 1
+
+    def isnextalive(self,next):
+        return True
 
     def save_json(self,filename):
         if self.alive:
@@ -134,7 +138,7 @@ def random_select(x,y):
 
 if __name__ == "__main__":
     args = handle_command_line()
-    api = (TwythonHelper("test.keys")).api
+    api = (TwythonHelper("keys.keys")).api
 
     g = Game()
     if os.path.isfile(args.gamefile):
