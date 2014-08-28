@@ -56,11 +56,11 @@ class Game(object):
                 next_universe[n] = 1
             if self.universe[n] == 0 and neighbours[n] == 3:
                 next_universe[n] = 1
+        self.alive = self.isnextalive(next)
         if len(next_universe) == 0:
             self.alive = False
-        if self.generations > 1000:
+        if self.generations > 2000:
             self.alive = False
-        self.alive = self.isnextalive(next)
         self.universe = next_universe
         self.generations += 1
 
